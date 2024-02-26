@@ -95,8 +95,8 @@ root = tk.Tk()
 root.title('Book reader with dictionary')
 root.configure(bg='gray')
 
-file_path = 'books/HP_b1 Harry Potter und der Stein der Weisen.txt'
-# file_path = 'pg31284.txt'
+
+file_path = 'books/pg31284.txt'
 app = Application(file_path, master=root)
 try:
     from ctypes import windll
