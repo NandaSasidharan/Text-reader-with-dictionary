@@ -1,7 +1,7 @@
 import json
 
 # The original dictionary is downloaded from https://kaikki.org/dictionary/German/index.html
-# This file has a size of 800MB. This file creates a smaller version (44MB) of the dictionary 
+# This file has a size of 800MB. This file creates a smaller version (44MB) of the dictionary
 # by removing complex fields.
 
 my_german_dict = {}
