@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import tkinter.font as tkFont
 import json
 
@@ -11,9 +12,11 @@ class Application(tk.Frame):
         self.filepath = filepath
         self.definition = None
         self.story = None
+        self.scrollbar = None
+        self.label = None
         self.entry = None
         self.master = master
-        self.pack()
+        self.grid()
         self.load_data()
         self.create_widgets()
 
@@ -35,15 +38,29 @@ class Application(tk.Frame):
         # Create a Text widget to display story
         self.story = tk.Text(self, width=70, height=20, wrap='word', bg='#bdc1a2', fg='black', padx=50, pady=50,
                              font=custom_font)
-        self.story.pack(side=tk.TOP, expand=True, fill=tk.BOTH, padx=5, pady=5)
+        # self.story.pack(side=tk.TOP, expand=True, fill=tk.BOTH, padx=5, pady=5)
+        self.story.grid(row=0, column=0, columnspan=2, sticky=tk.EW, padx=5, pady=5)
+
+        # create a scrollbar widget and set its command to the text widget
+        self.scrollbar = ttk.Scrollbar(root, orient='vertical', command=self.story.yview)
+        # self.scrollbar.pack()
+        self.scrollbar.grid(row=0, column=2, sticky=tk.NS, rowspan=1)
+        #  communicate back to the scrollbar
+        self.story['yscrollcommand'] = self.scrollbar.set
 
         # Create a Text widget to display definition of words
         self.definition = tk.Text(self, width=70, height=7, wrap='word', bg='#b1c0a2', fg='gray', padx=50, pady=0,
                                   font=custom_font)
-        self.definition.pack(side=tk.BOTTOM, expand=False, fill=tk.BOTH, padx=5, pady=5)
+        # self.definition.pack(side=tk.BOTTOM, expand=False, fill=tk.BOTH, padx=5, pady=5)
+        self.definition.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
+        # Create a label saying how to search for meaning
+        self.label = ttk.Label(self, text='Click at the word beginning or search here:', font=custom_font,
+                               foreground='gray', anchor=tk.W)
+        self.label.grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
         # Create an Entry widget for user input
         self.entry = tk.Entry(self, font=custom_font)
-        self.entry.pack(side=tk.BOTTOM, expand=False, fill=tk.BOTH, padx=5, pady=5)
+        # self.entry.pack(side=tk.BOTTOM, expand=False, fill=tk.BOTH, padx=5, pady=5)
+        self.entry.grid(row=1, column=1, columnspan=2, sticky=tk.EW,  padx=5, pady=5)
         # Bind the Return key to the show_definition method
         self.entry.bind('<Return>', self.show_definition_from_entry)
 
