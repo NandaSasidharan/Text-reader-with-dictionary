@@ -1,15 +1,17 @@
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
+from tkinter import Menu
+from tkinter import filedialog as fd # to open file from menu
 import json
 
 
 class Application(tk.Frame):
-    def __init__(self, filepath, master=None):
+    def __init__(self, master=None):
         super().__init__(master)
         self.text = None
         self.my_dict = None
-        self.filepath = filepath
+        self.filepath = None
         self.definition = None
         self.story = None
         self.scrollbar = None
@@ -17,20 +19,29 @@ class Application(tk.Frame):
         self.entry = None
         self.master = master
         self.grid()
-        self.load_data()
+        self.load_dictionary()
         self.create_widgets()
 
-    def load_data(self):
+    def select_file(self):
+        filetypes = (('text files', '*.txt'),('All files', '*.*'))
+        self.filepath = fd.askopenfilename(title='Open a file', initialdir='./', filetypes=filetypes)
+        
+
+    def load_dictionary(self):
         with open("dictionary/kaikki_formatted.json", 'r', encoding='utf8') as file:
             self.my_dict = json.load(file)
-        try:
-            with open(self.filepath, 'r') as file:
-                # Read the file contents into a string
-                self.text = file.read()
-        except:
-            with open(self.filepath, 'r', encoding='utf8') as file:
-                # Read the file contents into a string
-                self.text = file.read()
+
+    def load_file(self):
+        if self.filepath:        
+            try:
+                with open(self.filepath, 'r') as file:
+                    # Read the file contents into a string
+                    self.text = file.read()
+            except:
+                with open(self.filepath, 'r', encoding='utf8') as file:
+                    # Read the file contents into a string
+                    self.text = file.read()
+            
 
     def create_widgets(self):
         # Create a custom font
@@ -38,6 +49,7 @@ class Application(tk.Frame):
         # Create a Text widget to display story
         self.story = tk.Text(self, width=70, height=20, wrap='word', bg='#bdc1a2', fg='black', padx=50, pady=50,
                              font=custom_font)
+        self.story.insert("end", "Load text file to read.")
         self.story.grid(row=0, column=0, columnspan=2, sticky=tk.EW, padx=5, pady=5)
 
         # create a scrollbar widget and set its command to the text widget
@@ -60,21 +72,27 @@ class Application(tk.Frame):
         # Bind the Return key to the show_definition method
         self.entry.bind('<Return>', self.show_definition_from_entry)
 
+
+    def display_story(self):
+        self.select_file()
+        self.load_file()
+        if self.text: # self.txt is None, if select_file or load_file fails.
         # Add story to the widget with clickable words. Add newlines after paragraphs and add page number after 16 lines
-        paragraphs = self.text.split('\n\n')
-        line_count = 0
-        page_count = 0
-        for para in paragraphs:
-            lines = para.split('\n')
-            for line in lines:
-                words = line.split()
-                self.insert_clickable(words, self.story)
-                self.story.insert("end", "\n ")
-                line_count += 1
-                if line_count % 16 == 0:
-                    page_count += 1
-                    self.story.insert("end", "\n\n ---- page %d ---- \n\n" % page_count)
-            self.story.insert("end", "\n ")  # new line for paragraph ends
+            self.story.delete('1.0', tk.END)
+            paragraphs = self.text.split('\n\n')
+            line_count = 0
+            page_count = 0
+            for para in paragraphs:
+                lines = para.split('\n')
+                for line in lines:
+                    words = line.split()
+                    self.insert_clickable(words, self.story)
+                    self.story.insert("end", "\n ")
+                    line_count += 1
+                    if line_count % 16 == 0:
+                        page_count += 1
+                        self.story.insert("end", "\n\n ---- page %d ---- \n\n" % page_count)
+                self.story.insert("end", "\n ")  # new line for paragraph ends
 
     def insert_clickable(self, words, widget):
         # add tag 'clickable' to every word. When clicked, call the function show_definition_from_click()
@@ -120,15 +138,27 @@ class Application(tk.Frame):
                         word = word.replace(':', '')
                         return word
    
-                
 
 
 root = tk.Tk()
 root.title('Book reader with dictionary')
 root.configure(bg='gray')
+# Set a custom font for the entire application
+root.option_add('*Font', (14)) # add font size
 
-file_path = 'books/Josefine Mutzenbacher.txt'
-app = Application(file_path, master=root)
+
+app = Application(master=root)
+# create a menubar
+menubar = Menu(root)
+root.config(menu=menubar)
+# create a menu
+file_menu = Menu(menubar, tearoff=False)
+# add menu items to the File menu
+file_menu.add_command(label='Open', command=app.display_story)
+# add the File menu to the menubar
+menubar.add_cascade(label="File",menu=file_menu)
+
+
 try:
     from ctypes import windll
 
