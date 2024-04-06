@@ -9,3 +9,8 @@ This project was a result of an attempt to practice two languages; German and Py
 - The 'dictionary' directory contains a German dictionary with 320k words. It is a simplified version of the dictionary from https://kaikki.org/dictionary/German/index.html
 -  In the file 'reader_dict_app.py' update the file_path to the .txt book file.
 -  Run 'reader_dict_app.py' in python. The GUI will show the book. If you click at the beginning of the words, its meaning will be shown in the box at the bottm. Alternatively, you can type in the words in the entry box above it and press enter. 
+-  Current view of the App interface is shown below: 
+<!-- ![Current view of the App](./images/current_app_status.jpg?raw=true "App view") -->
+<p align="center">
+  <img src="./images/current_app_status.jpg" width="550" alt="App view" title="App view">
+</p>
